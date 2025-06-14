@@ -398,3 +398,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/src/etc/ssl/certs/localhost+5-key.pem
+/src/etc/ssl/certs/localhost+5.pem
+/src/etc/ssl/certs/rootCA-key.pem
+/src/etc/ssl/certs/rootCA.pem
+/src/Services/Discount/Discount.Grpc/Migrations

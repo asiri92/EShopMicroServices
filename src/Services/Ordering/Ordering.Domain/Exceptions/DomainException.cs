@@ -3,7 +3,7 @@
     public class DomainException : Exception
     {
         public DomainException(string message) 
-            : base($"Domain Eception: \"{message}\" throws from domain Layer.")
+            : base($"Domain Exception: \"{message}\" throws from domain Layer.")
         { 
         }
     }

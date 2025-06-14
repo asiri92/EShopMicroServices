@@ -38,6 +38,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=catalogdb;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/localhost+5.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/localhost+5-key.pem
     depends_on:
       - catalogdb
     ports:
@@ -48,6 +50,8 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./etc/ssl/certs/localhost+5.pem:/etc/ssl/certs/localhost+5.pem:ro
+      - ./etc/ssl/certs/localhost+5-key.pem:/etc/ssl/certs/localhost+5-key.pem:ro
 
   basket.api:
     environment:
@@ -56,9 +60,13 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
       - ConnectionStrings__Redis=distributedcache:6380
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/localhost+5.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/localhost+5-key.pem
+      - GrpcSettings__DiscountUrl=https://discount.grpc:8081
     depends_on:
       - basketdb
       - distributedcache
+      - discount.grpc
     ports:
       - "6001:8080"
       - "6061:8081"
@@ -67,3 +75,25 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./etc/ssl/certs/localhost+5.pem:/etc/ssl/certs/localhost+5.pem:ro
+      - ./etc/ssl/certs/localhost+5-key.pem:/etc/ssl/certs/localhost+5-key.pem:ro
+      - ./etc/ssl/certs/rootCA.pem:/etc/ssl/certs/rootCA.pem
+
+  discount.grpc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Data Source=discountdb
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/localhost+5.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/localhost+5-key.pem
+    ports:
+      - "6002:8080"
+      - "6062:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./etc/ssl/certs/localhost+5.pem:/etc/ssl/certs/localhost+5.pem:ro
+      - ./etc/ssl/certs/localhost+5-key.pem:/etc/ssl/certs/localhost+5-key.pem:ro
